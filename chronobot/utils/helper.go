@@ -9,7 +9,7 @@ import (
 // ParseDate parses a date string in the format YYYY-MM-DD
 func ParseDate(input string) (time.Time, error) {
 	// DD-MM-YYYY format
-	format := "2006-0102"
+	format := "2006-01-02"
 	// Parse the date string
 	return time.Parse(format, strings.TrimSpace(input))
 }

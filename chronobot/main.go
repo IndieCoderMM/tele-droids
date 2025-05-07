@@ -58,7 +58,10 @@ func handler(bot *tgbotapi.BotAPI) http.HandlerFunc {
 			if update.Message.IsCommand() {
 				switch update.Message.Command() {
 				case "start":
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Welcome to ChronoBot! Please send me a date in YYYY-MM-DD format.")
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hey there! I'm *ChronoBot*, your friendly temporal tour guide 🤖✨\nSend me any date (like `2023-04-18`) and I'll tell you everything I know about that day.\n\nSo, Go ahead and pick a date ⏳")
+
+					msg.ParseMode = "MarkdownV2"
+
 					msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 					bot.Send(msg)
 				case "help":
@@ -75,7 +78,7 @@ func handler(bot *tgbotapi.BotAPI) http.HandlerFunc {
 				input := update.Message.Text
 				t, err := utils.ParseDate(input)
 				if err != nil {
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Invalid date format. Please use YYYY-MM-DD.")
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Please use YYYY-MM-DD.")
 					bot.Send(msg)
 					return
 				}
@@ -103,6 +106,6 @@ func buildResponse(t time.Time) string {
 	onThisDay := utils.FetchOnThisDay(t.Month(), t.Day())
 	nasa := utils.FetchNasaPhoto(t.Format("2006-01-02"))
 
-	return fmt.Sprintf("📅 *%s* — %d days ago\n\n🗓️ Day of the week: *%s*\n♒ Western Zodiac: *%s*\n🐉 Chinese Zodiac: *%s*\n\n🧠 *On This Day:* %s\n\n📷 *NASA Photo:* %s — %s",
+	return fmt.Sprintf("🕰️ *%s* — that's %d days ago!\n\n📆 It was a *%s*\n♈ People born on this day are *%s*\n🐲 In Chinese zodiac, they'd be a *%s*\n\n📜 *Back in time, on this date:*\n%s\n\n🚀 *I got this cosmic shot straight from NASA taken on that day:*\n[%s](%s)",
 		t.Format("2006-01-02"), daysAgo, weekday, zodiac, chineseZodiac, onThisDay, nasa.Title, nasa.URL)
 }
