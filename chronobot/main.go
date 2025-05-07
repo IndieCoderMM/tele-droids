@@ -24,12 +24,12 @@ func main() {
 	log.Printf("Authorized on account: %s", bot.Self.UserName)
 
 	url := utils.GetEnvString("DOMAIN_URL", "")
-	err = setWebhook(bot, url)
+	err = setWebhook(bot, url+"/webhook")
 	if err != nil {
 		log.Fatal("Failed to set webhook:", err)
 	}
 
-	http.HandleFunc("/hook", handler(bot))
+	http.HandleFunc("/webhook", handler(bot))
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
