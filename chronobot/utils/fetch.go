@@ -9,7 +9,7 @@ import (
 
 // Fetch an event from Wikipedia's On This Day API
 func FetchOnThisDay(month time.Month, day int) string {
-	url := fmt.Sprintf("https://api.wikipedia.org/feed/v1/wikipedia/en/onthisday/events/%2d/%2d", month, day)
+	url := fmt.Sprintf("https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/%2d/%2d", month, day)
 
 	type Event struct {
 		Text string `json:"text"`

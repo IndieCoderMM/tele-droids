@@ -101,8 +101,17 @@ func buildResponse(t time.Time) string {
 
 	daysAgo := int(now.Sub(t).Hours() / 24)
 	weekday := t.Weekday().String()
+
 	zodiac := utils.GetZodiac(t)
 	chineseZodiac := utils.GetChineseZodiac(t.Year())
+
+	if daysAgo < 0 {
+		// Calculate days until the date
+		daysUntil := int(t.Sub(now).Hours() / 24)
+		return fmt.Sprintf("🕰️ *%s* — that's in %d days!\n\n📆 It will be a *%s*\n♈ People born on this day are *%s*\n🐲 In Chinese zodiac, they'd be a *%s*",
+			t.Format("2006-01-02"), daysUntil, weekday, zodiac, chineseZodiac)
+	}
+
 	onThisDay := utils.FetchOnThisDay(t.Month(), t.Day())
 	nasa := utils.FetchNasaPhoto(t.Format("2006-01-02"))
 
