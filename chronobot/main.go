@@ -2,14 +2,16 @@ package main
 
 import (
 	"chronobot/utils"
+	"encoding/json"
 	"fmt"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+	"net/http"
 	"time"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 func main() {
+	port := utils.GetEnvString("PORT", ":8080")
 	token := utils.GetEnvString("TG_BOT_KEY", "")
 	if token == "" {
 		log.Fatal("Telegram bot token is not set.")
@@ -21,27 +23,73 @@ func main() {
 	bot.Debug = true
 	log.Printf("Authorized on account: %s", bot.Self.UserName)
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-	updates, err := bot.GetUpdatesChan(u)
+	url := utils.GetEnvString("DOMAIN_URL", "")
+	err = setWebhook(bot, url)
+	if err != nil {
+		log.Fatal("Failed to set webhook:", err)
+	}
 
-	for update := range updates {
-		if update.Message == nil { // ignore non-Message Updates
-			continue
-		}
+	http.HandleFunc("/hook", handler(bot))
+	log.Fatal(http.ListenAndServe(port, nil))
+}
 
-		input := update.Message.Text
-		t, err := utils.ParseDate(input)
+func setWebhook(bot *tgbotapi.BotAPI, url string) error {
+	_, err := bot.SetWebhook(tgbotapi.NewWebhook(url))
+	if err != nil {
+		return fmt.Errorf("failed to set webhook: %v", err)
+	}
+	return nil
+}
+
+func handler(bot *tgbotapi.BotAPI) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Parse incoming JSON payload (Telegram updates)
+		update := tgbotapi.Update{}
+		err := json.NewDecoder(r.Body).Decode(&update)
 		if err != nil {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Invalid date format. Please use YYYY-MM-DD.")
-			bot.Send(msg)
-			continue
+			log.Println("Error decoding update:", err)
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
 		}
 
-		response := buildResponse(t)
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
-		msg.ParseMode = "Markdown"
-		bot.Send(msg)
+		// Handle new user messages
+		if update.Message != nil {
+			// Check if the message is a command
+			if update.Message.IsCommand() {
+				switch update.Message.Command() {
+				case "start":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Welcome to ChronoBot! Please send me a date in YYYY-MM-DD format.")
+					msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+					bot.Send(msg)
+				case "help":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "I can provide you with historical events and zodiac signs for a given date. Just send me a date in YYYY-MM-DD format.")
+					msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+					bot.Send(msg)
+				default:
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Unknown command. Please send me a date in YYYY-MM-DD format.")
+					msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+					bot.Send(msg)
+				}
+			} else {
+				// Regular date input handling
+				input := update.Message.Text
+				t, err := utils.ParseDate(input)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Invalid date format. Please use YYYY-MM-DD.")
+					bot.Send(msg)
+					return
+				}
+
+				// Send the response
+				response := buildResponse(t)
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
+				msg.ParseMode = "Markdown"
+				bot.Send(msg)
+			}
+		}
+
+		// Respond to Telegram
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
