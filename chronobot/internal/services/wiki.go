@@ -34,7 +34,7 @@ func FetchBirthdays(month time.Month, day int) string {
 		birthdays = ""
 	} else {
 		for i := 0; i < len(result.Births) && i < 3; i++ {
-			birthdays = fmt.Sprintf("- %s\n", result.Births[i].Text)
+			birthdays = fmt.Sprintf("%d. %s\n", i+1, result.Births[i].Text)
 		}
 	}
 

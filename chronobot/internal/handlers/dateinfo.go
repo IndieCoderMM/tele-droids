@@ -10,6 +10,7 @@ import (
 
 func HandleDateInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update, t time.Time) {
 	body := buildResponse(t)
+	fmt.Println("Response body", body)
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, body)
 	msg.ParseMode = "Markdown"
 	msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -40,11 +41,13 @@ func buildResponse(t time.Time) string {
 
 	birthdays := services.FetchBirthdays(t.Month(), t.Day())
 	if birthdays != "" {
+		fmt.Println("Birthdays", birthdays)
 		dateInfo += fmt.Sprintf("\n🎂 Famous birthdays on this day:\n %s\n", birthdays)
 	}
 
 	events := services.FetchEvent(t.Month(), t.Day())
 	if events != "" {
+		fmt.Println("Events", birthdays)
 		dateInfo += fmt.Sprintf("\n📜 Back in time:\n %s\n", events)
 	}
 
