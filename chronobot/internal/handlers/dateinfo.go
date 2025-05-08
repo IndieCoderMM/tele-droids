@@ -32,31 +32,25 @@ func buildResponse(t time.Time) string {
 			t.Format("2006-01-02"), daysUntil, weekday, zodiac, chineseZodiac)
 	}
 
-	event, birthdays, err := services.FetchOnThisDay(t.Month(), t.Day())
-	eventText := fmt.Sprintf(" 📜 Back in time, here's recent event happend on %s %2d:\n %s\n", t.Month().String(), t.Day(), event)
-	birthdayText := fmt.Sprintf(" 🎂 Famous birthdays on this day:\n %s\n", birthdays)
-	if err != nil {
-		fmt.Println("Error fetching events:", err)
-		eventText = ""
-		birthdayText = ""
-	}
-
 	dateInfo := fmt.Sprintf("🕰️ *%s* - that's %d days ago!\n\n"+
-		"📅 It was a *%s*\n"+
-		"♈ People born on this day are *%s*\n"+
-		"🐲 In Chinese zodiac, they'd be a *%s*\n",
+		"- 📅 It was a *%s*\n"+
+		"- ♈ People born on this day are *%s*\n"+
+		"- 🐲 In Chinese zodiac, they'd be a *%s*\n",
 		t.Format("2006-01-02"), daysAgo, weekday, zodiac, chineseZodiac)
 
-	if eventText != "" {
-		dateInfo += eventText
+	birthdays := services.FetchBirthdays(t.Month(), t.Day())
+	if birthdays != "" {
+		dateInfo += fmt.Sprintf("\n🎂 Famous birthdays on this day:\n %s\n", birthdays)
 	}
-	if birthdayText != "" {
-		dateInfo += birthdayText
+
+	events := services.FetchEvent(t.Month(), t.Day())
+	if events != "" {
+		dateInfo += fmt.Sprintf("\n📜 Back in time:\n %s\n", events)
 	}
 
 	nasa, err := services.FetchNasaPhoto(t.Format("2006-01-02"))
 	if err == nil {
-		dateInfo += fmt.Sprintf("🌌 NASA's Picture of the Day: %s\n", nasa)
+		dateInfo += fmt.Sprintf("\n🌌 NASA's Picture of the Day: %s\n", nasa)
 	} else {
 		fmt.Println("Error fetching NASA photo:", err)
 	}
