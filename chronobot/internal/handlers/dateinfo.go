@@ -41,11 +41,10 @@ func buildResponse(t time.Time) string {
 		birthdayText = ""
 	}
 
-	dateInfo := fmt.Sprintf(` 🕰️ *%s* - that's %d days ago!
-  📅 It was a *%s*
-  ♈ People born on this day are *%s*
-  🐲 In Chinese zodiac, they'd be a *%s*
-  `,
+	dateInfo := fmt.Sprintf("🕰️ *%s* - that's %d days ago!\n\n"+
+		"📅 It was a *%s*\n"+
+		"♈ People born on this day are *%s*\n"+
+		"🐲 In Chinese zodiac, they'd be a *%s*\n",
 		t.Format("2006-01-02"), daysAgo, weekday, zodiac, chineseZodiac)
 
 	if eventText != "" {
