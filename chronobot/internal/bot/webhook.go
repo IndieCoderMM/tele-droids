@@ -57,6 +57,8 @@ func handleCommand(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		handlers.HandleStart(bot, update)
 	case "help":
 		handlers.HandleHelp(bot, update)
+	case "today":
+		handlers.HandleTodayInfo(bot, update)
 	default:
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Unknown command. Please send me a date in YYYY-MM-DD format.")
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
