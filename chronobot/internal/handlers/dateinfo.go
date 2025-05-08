@@ -42,7 +42,7 @@ func buildResponse(t time.Time) string {
 	birthdays := services.FetchBirthdays(t.Month(), t.Day())
 	if birthdays != "" {
 		fmt.Println("Birthdays", birthdays)
-		dateInfo += fmt.Sprintf("\n🎂 Famous birthdays on this day:\n %s\n", birthdays)
+		dateInfo += fmt.Sprintf("\n🎂 Famous birthdays on this day:\n%s\n", birthdays)
 	}
 
 	events := services.FetchEvent(t.Month(), t.Day())
@@ -53,7 +53,7 @@ func buildResponse(t time.Time) string {
 
 	nasa, err := services.FetchNasaPhoto(t.Format("2006-01-02"))
 	if err == nil {
-		dateInfo += fmt.Sprintf("\n🌌 NASA's Picture of the Day: %s\n", nasa)
+		dateInfo += fmt.Sprintf("\n🌌 NASA's Picture of the Day:\n[%s](%s)\n", nasa.Title, nasa.URL)
 	} else {
 		fmt.Println("Error fetching NASA photo:", err)
 	}
