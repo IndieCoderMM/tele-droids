@@ -43,7 +43,7 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		body += fmt.Sprintf("\n📜 Today in history:\n %s\n", events)
 	}
 
-	nasa, err := services.FetchNasaPhoto("today")
+	nasa, err := services.FetchNasaPhoto(t.Format("2006-01-02"))
 	if err == nil {
 		body += fmt.Sprintf("\n🌌 NASA's Picture of the Day:\n[%s](%s)\n", nasa.Title, nasa.URL)
 	} else {
