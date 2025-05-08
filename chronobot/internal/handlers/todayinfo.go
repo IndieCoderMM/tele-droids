@@ -21,7 +21,7 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 
 	milestones := utils.DaysUntil(t)
 
-	body += fmt.Sprintf("\n\n🗓️ Days until:\n"+
+	body += fmt.Sprintf("\n🗓️ Days until:\n"+
 		" 🌙 Next month: *%d days*\n"+
 		" ☀️ Next year: *%d days*\n"+
 		" 🔟 Next decade: *%d days*\n"+

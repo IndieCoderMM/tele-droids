@@ -40,10 +40,10 @@ func WebhookHandler(bot *tgbotapi.BotAPI) http.HandlerFunc {
 			t, err := utils.ParseDate(update.Message.Text)
 			if err != nil {
 				handlers.HandleHelp(bot, update)
+			} else {
+				// Handle date input
+				handlers.HandleDateInfo(bot, update, t)
 			}
-
-			// Handle date input
-			handlers.HandleDateInfo(bot, update, t)
 		}
 
 		// Respond to Telegram
