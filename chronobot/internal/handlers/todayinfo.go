@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"chronobot/internal/services"
+	"chronobot/internal/utils"
 	"fmt"
 	"time"
 
@@ -18,7 +19,7 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		"🐲 In Chinese zodiac, they'd be a *%s*\n",
 		t.Format("2006-01-02"), t.Weekday().String(), zodiac, chineseZodiac)
 
-	milestones := daysUntil(t)
+	milestones := utils.DaysUntil(t)
 
 	body += fmt.Sprintf("\n\n🗓️ Days until:\n"+
 		" 🌙 Next month: *%d days*\n"+
@@ -54,31 +55,4 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	msg.ParseMode = "Markdown"
 	msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 	bot.Send(msg)
-}
-
-type TimeMilestones struct {
-	DaysToNextMonth      int
-	DaysToNextYear       int
-	DaysToNextDecade     int
-	DaysToNextCentury    int
-	DaysToNextMillennium int
-}
-
-func daysUntil(from time.Time) TimeMilestones {
-	// Normalize to start of day
-	from = time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, from.Location())
-
-	nextMonth := time.Date(from.Year(), from.Month()+1, 1, 0, 0, 0, 0, from.Location())
-	nextYear := time.Date(from.Year()+1, 1, 1, 0, 0, 0, 0, from.Location())
-	nextDecade := time.Date((from.Year()/10+1)*10, 1, 1, 0, 0, 0, 0, from.Location())
-	nextCentury := time.Date((from.Year()/100+1)*100, 1, 1, 0, 0, 0, 0, from.Location())
-	nextMillennium := time.Date((from.Year()/1000+1)*1000, 1, 1, 0, 0, 0, 0, from.Location())
-
-	return TimeMilestones{
-		DaysToNextMonth:      int(nextMonth.Sub(from).Hours() / 24),
-		DaysToNextYear:       int(nextYear.Sub(from).Hours() / 24),
-		DaysToNextDecade:     int(nextDecade.Sub(from).Hours() / 24),
-		DaysToNextCentury:    int(nextCentury.Sub(from).Hours() / 24),
-		DaysToNextMillennium: int(nextMillennium.Sub(from).Hours() / 24),
-	}
 }
