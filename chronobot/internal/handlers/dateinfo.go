@@ -11,7 +11,7 @@ import (
 func HandleDateInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update, t time.Time) {
 	body := buildResponse(t)
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, body)
-	msg.ParseMode = "MarkdownV2"
+	msg.ParseMode = "Markdown"
 	msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 	bot.Send(msg)
 }

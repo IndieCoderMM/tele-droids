@@ -8,6 +8,7 @@ import (
 
 func HandleHelp(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, templates.Help)
+	msg.ParseMode = "Markdown"
 	msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 	bot.Send(msg)
 }
