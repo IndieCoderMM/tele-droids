@@ -34,9 +34,9 @@ func buildResponse(t time.Time) string {
 	}
 
 	dateInfo := fmt.Sprintf("🕰️ *%s* - that's %d days ago!\n\n"+
-		"- 📅 It was a *%s*\n"+
-		"- ♈ People born on this day are *%s*\n"+
-		"- 🐲 In Chinese zodiac, they'd be a *%s*\n",
+		"📅 It was a *%s*\n"+
+		"♈ People born on this day are *%s*\n"+
+		"🐲 In Chinese zodiac, they'd be a *%s*\n",
 		t.Format("2006-01-02"), daysAgo, weekday, zodiac, chineseZodiac)
 
 	birthdays := services.FetchBirthdays(t.Month(), t.Day())

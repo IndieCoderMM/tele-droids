@@ -1,17 +1,33 @@
 package utils
 
 import (
+	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
-// ParseDate parses a date string in the format YYYY-MM-DD
+// ParseDate parses a date string in different formats
 func ParseDate(input string) (time.Time, error) {
-	// DD-MM-YYYY format
-	format := "2006-01-02"
-	// Parse the date string
-	return time.Parse(format, strings.TrimSpace(input))
+	// Define the date formats to try
+	dateFormats := []string{
+		"2006-01-02",      // YYYY-MM-DD
+		"2006/01/02",      // YYYY/MM/DD
+		"02-01-2006",      // DD-MM-YYYY
+		"02/01/2006",      // DD/MM/YYYY
+		"January 2, 2006", // Month DD, YYYY
+		"Jan 2, 2006",     // Month DD, YYYY
+		"2 January 2006",  // DD Month YYYY
+		"2 Jan 2006",      // DD Month YYYY
+	}
+
+	for _, format := range dateFormats {
+		t, err := time.Parse(format, input)
+		if err == nil {
+			return t, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("invalid date format: %s", input)
 }
 
 func IsLeapYear(year int) bool {
