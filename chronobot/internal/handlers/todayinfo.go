@@ -22,11 +22,11 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	milestones := utils.DaysUntil(t)
 
 	body += fmt.Sprintf("\n🗓️ Days until:\n"+
-		" 🌙 Next month: *%d days*\n"+
-		" ☀️ Next year: *%d days*\n"+
-		" 🔟 Next decade: *%d days*\n"+
-		" 🕰️ Next century: *%d days*\n"+
-		" 🛸 Next millennium: *%d days*\n",
+		"🌙 Next month: *%d days*\n"+
+		"☀️ Next year: *%d days*\n"+
+		"🔟 Next decade: *%d days*\n"+
+		"🕰️ Next century: *%d days*\n"+
+		"🛸 Next millennium: *%d days*\n",
 		milestones.DaysToNextMonth,
 		milestones.DaysToNextYear,
 		milestones.DaysToNextDecade,
@@ -45,7 +45,7 @@ func HandleTodayInfo(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	}
 
 	nasa, err := services.FetchNasaPhoto(t.Format("2006-01-02"))
-	if err == nil {
+	if err == nil && nasa.URL != "" {
 		body += fmt.Sprintf("\n🌌 NASA's Picture of the Day:\n[%s](%s)\n", nasa.Title, nasa.URL)
 	} else {
 		fmt.Println("Error fetching NASA photo:", err)
