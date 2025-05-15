@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	token, ok := utils.GetEnvString("TG_BOT_TOKEN", "")
+	token, ok := utils.GetEnvString("TG_BOT_KEY", "")
 	if !ok {
 		log.Panic("Bot token not found")
 	}
