@@ -7,7 +7,7 @@ import (
 )
 
 func InitWebhook(bot *tgbotapi.BotAPI, url string) error {
-	wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s/%s", url, bot.Token))
+	wh, err := tgbotapi.NewWebhook(url + "/webhook")
 	if err != nil {
 		return fmt.Errorf("failed to set webhook: %v", err)
 	}

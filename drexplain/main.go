@@ -26,7 +26,13 @@ func main() {
 		log.Panic(err)
 	}
 
-	updates := bot.ListenForWebhook("/" + bot.Token)
+	updates := bot.ListenForWebhook("/webhook")
+
+	// healthcheck
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
 
 	port, _ := utils.GetEnvString("PORT", "8080")
 	go http.ListenAndServe(":"+port, nil)
