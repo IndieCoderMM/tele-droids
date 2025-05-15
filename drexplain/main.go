@@ -4,6 +4,7 @@ import (
 	b "drexplain/internal/bot"
 	"drexplain/internal/handlers"
 	"drexplain/internal/utils"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -22,11 +23,9 @@ func main() {
 	}
 
 	bot := b.InitBot(token)
-	if err := b.InitWebhook(bot, url); err != nil {
+	if err := b.InitWebhook(bot, url+"/webhook"); err != nil {
 		log.Panic(err)
 	}
-
-	updates := bot.ListenForWebhook("/webhook")
 
 	// healthcheck
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -34,16 +33,26 @@ func main() {
 		w.Write([]byte("OK"))
 	})
 
-	port, _ := utils.GetEnvString("PORT", "8080")
-	go http.ListenAndServe(":"+port, nil)
+	http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
+		var update tgbotapi.Update
+		err := json.NewDecoder(r.Body).Decode(&update)
+		if err != nil {
+			log.Println("Error decoding update:", err)
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
 
-	for update := range updates {
 		if update.Message == nil || !update.Message.IsCommand() {
-			continue
+			return
 		}
 
 		handleCommand(bot, update.Message)
-	}
+		w.WriteHeader(http.StatusOK)
+	},
+	)
+
+	port, _ := utils.GetEnvString("PORT", "8080")
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func handleCommand(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
