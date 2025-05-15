@@ -24,7 +24,7 @@ func main() {
 	port, _ := utils.GetEnvString("PORT", "8080")
 
 	bot := b.InitBot(token)
-	if err := b.InitWebhook(bot, url, port); err != nil {
+	if err := b.InitWebhook(bot, url); err != nil {
 		log.Panic(err)
 	}
 
