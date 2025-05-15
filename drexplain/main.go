@@ -21,15 +21,15 @@ func main() {
 		log.Panic("Bot token not found")
 	}
 
-	port, _ := utils.GetEnvString("PORT", "8080")
+	port, _ := utils.GetEnvString("PORT", "8443")
 
 	bot := b.InitBot(token)
-	if err := b.InitWebhook(bot, url); err != nil {
+	if err := b.InitWebhook(bot, url, port); err != nil {
 		log.Panic(err)
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	go http.ListenAndServe("0.0.0.0:"+port, nil)
 
 	for update := range updates {
 		if update.Message == nil || !update.Message.IsCommand() {

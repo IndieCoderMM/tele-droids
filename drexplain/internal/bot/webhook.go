@@ -6,8 +6,8 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func InitWebhook(bot *tgbotapi.BotAPI, url string) error {
-	wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s:8443/%s", url, bot.Token))
+func InitWebhook(bot *tgbotapi.BotAPI, url, port string) error {
+	wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s:%s/%s", url, port, bot.Token))
 	if err != nil {
 		return fmt.Errorf("failed to set webhook: %v", err)
 	}
